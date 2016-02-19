@@ -55,10 +55,9 @@ public class SRPuppyClient {
     - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
     - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
     */
-    public func fetchRecipes(ingredients: [String]?, query: String?, page: Int = 1, completionHandler: CompletionHandler)  {
+    public func fetchRecipes(ingredients: [String]?, query: String?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
         
-        taskWithParameters(ingredients, query: query, page: page) { result, error in
-            
+        return taskWithParameters(ingredients, query: query, page: page) { result, error in
             if let error = error {
                 completionHandler(result: nil, error: error)
             } else {
@@ -73,10 +72,9 @@ public class SRPuppyClient {
      - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
      - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
      */
-    public func fetchRecipesWithIngredients(ingredients: [String]?, page: Int = 1, completionHandler: CompletionHandler) -> Void {
+    public func fetchRecipesWithIngredients(ingredients: [String]?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
         
-        taskWithParameters(ingredients, query: nil, page: page) { result, error in
-            
+        return taskWithParameters(ingredients, query: nil, page: page) { result, error in
             if let error = error {
                 completionHandler(result: nil, error: error)
             } else {
@@ -91,10 +89,9 @@ public class SRPuppyClient {
      - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
      - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
      */
-    public func fetchRecipesWithQuery(query: String?, page: Int = 1, completionHandler: CompletionHandler) -> Void {
+    public func fetchRecipesWithQuery(query: String?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
         
-        taskWithParameters(nil, query: query, page: page) { result, error in
-            
+        return taskWithParameters(nil, query: query, page: page) { result, error in
             if let error = error {
                 completionHandler(result: nil, error: error)
             } else {
