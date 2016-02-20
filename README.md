@@ -1,5 +1,5 @@
 # SwiftyRecipes
-Swift API for fetching recipes online using Recipe Puppy.
+Swift API for fetching recipes online using Recipe Puppy <http://www.recipepuppy.com>.
 
 ## Usage
 1. Include the files from the SwiftyRecipes folder in your project
