@@ -100,7 +100,7 @@ public class SRPuppyClient {
         }
     }
     
-    // MARK: Task Method
+    // MARK: Task Methods
     
     /**
     Creates a NSURLSessionDataTask for a Recipe Puppy API request given a set of parameters.
@@ -133,5 +133,31 @@ public class SRPuppyClient {
         } else {
             return nil
         }
+    }
+    
+    /**
+    Creates a NSURLSessionDataTask for an image located at a given NSURL.
+    - parameter imageURL: The URL of the image in an NSURL object.
+    - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional NSData object containing the image data and an optional NSError indicating error.
+    - returns: The created NSURLSessionDataTask.
+    */
+    public func taskForImage(imageURL: NSURL, completionHandler: (imageData: NSData?, error: NSError?) ->  Void) -> NSURLSessionTask {
+        
+        // Create the url request.
+        let request = NSURLRequest(URL: imageURL)
+        
+        // Create the task.
+        let task = session.dataTaskWithRequest(request) {data, response, downloadError in
+            
+            if let error = downloadError {
+                completionHandler(imageData: nil, error: error)
+            } else {
+                completionHandler(imageData: data, error: nil)
+            }
+        }
+        
+        task.resume()
+        
+        return task
     }
 }
