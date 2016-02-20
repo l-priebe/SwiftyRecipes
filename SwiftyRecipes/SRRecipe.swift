@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class SRRecipe: NSCoding {
+public class SRRecipe: NSCoding, CustomStringConvertible {
     
     // MARK: Properties
    
@@ -68,6 +68,13 @@ public class SRRecipe: NSCoding {
             self.url = NSURL(string: "www.hundredeni.com")
             self.thumbnailUrl = nil
             return nil
+        }
+    }
+    
+    // MARK: - CustomStringConvertible Protocol
+    public var description: String {
+        get {
+            return "Recipe: \(title).\nIngredients: \(ingredients)"
         }
     }
 }
