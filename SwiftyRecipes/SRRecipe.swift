@@ -8,10 +8,10 @@
 
 import UIKit
 
-public class SRRecipe: NSCoding, CustomStringConvertible {
+public class SRRecipe: NSObject, NSCoding {
     
     // MARK: Properties
-   
+    
     public let title: String!
     public let ingredients: String!
     public let url: NSURL!
@@ -58,10 +58,10 @@ public class SRRecipe: NSCoding, CustomStringConvertible {
             ingredients = aDecoder.decodeObjectForKey(CodingKeys.Ingredients) as? String,
             url = aDecoder.decodeObjectForKey(CodingKeys.Href) as? NSURL,
             thumbnailUrl = aDecoder.decodeObjectForKey(CodingKeys.Thumbnail) as? NSURL? {
-                self.title = title
-                self.ingredients = ingredients
-                self.url = url
-                self.thumbnailUrl = thumbnailUrl
+            self.title = title
+            self.ingredients = ingredients
+            self.url = url
+            self.thumbnailUrl = thumbnailUrl
         } else {
             self.title = "No Title"
             self.ingredients = "No Ingredients"
@@ -72,7 +72,7 @@ public class SRRecipe: NSCoding, CustomStringConvertible {
     }
     
     // MARK: - CustomStringConvertible Protocol
-    public var description: String {
+    override public var description: String {
         get {
             return "Recipe: \(title).\nIngredients: \(ingredients)"
         }
