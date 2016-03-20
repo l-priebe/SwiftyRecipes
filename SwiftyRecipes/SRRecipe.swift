@@ -53,22 +53,11 @@ public class SRRecipe: NSObject, NSCoding {
         aCoder.encodeObject(thumbnailUrl, forKey: CodingKeys.Thumbnail)
     }
     
-    @objc public required init?(coder aDecoder: NSCoder) {
-        if let title = aDecoder.decodeObjectForKey(CodingKeys.Title) as? String,
-            ingredients = aDecoder.decodeObjectForKey(CodingKeys.Ingredients) as? String,
-            url = aDecoder.decodeObjectForKey(CodingKeys.Href) as? NSURL,
-            thumbnailUrl = aDecoder.decodeObjectForKey(CodingKeys.Thumbnail) as? NSURL? {
-            self.title = title
-            self.ingredients = ingredients
-            self.url = url
-            self.thumbnailUrl = thumbnailUrl
-        } else {
-            self.title = "No Title"
-            self.ingredients = "No Ingredients"
-            self.url = NSURL(string: "www.hundredeni.com")
-            self.thumbnailUrl = nil
-            return nil
-        }
+    @objc public required init?(coder aDecoder: NSCoder) {  
+        title = aDecoder.decodeObjectForKey(CodingKeys.Title) as! String
+        ingredients = aDecoder.decodeObjectForKey(CodingKeys.Ingredients) as! String
+        url = aDecoder.decodeObjectForKey(CodingKeys.Href) as! NSURL
+        thumbnailUrl = aDecoder.decodeObjectForKey(CodingKeys.Thumbnail) as! NSURL?
     }
     
     // MARK: - CustomStringConvertible Protocol
