@@ -13,31 +13,31 @@
 
 import UIKit
 
-public class SRImageCache {
+open class SRImageCache {
     
-    private var inMemoryCache = NSCache()
+    fileprivate var inMemoryCache = NSCache<AnyObject, AnyObject>()
     
     // MARK: - Clear Cache
     
-    public func clear() {
+    open func clear() {
         inMemoryCache.removeAllObjects()
     }
     
     // MARK: - Retreiving Images
     
-    public func imageWithIdentifier(identifier: String?) -> UIImage? {
+    open func imageWithIdentifier(_ identifier: String?) -> UIImage? {
         
         if identifier != nil && identifier! != "" {
             
             if let path = pathForIdentifier(identifier!) {
                 
                 // First try the memory cache
-                if let image = inMemoryCache.objectForKey(path) as? UIImage {
+                if let image = inMemoryCache.object(forKey: path as AnyObject) as? UIImage {
                     return image
                 }
                 
                 // Next try the hard drive
-                if let data = NSData(contentsOfFile: path) {
+                if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
                     return UIImage(data: data)
                 }
             }
@@ -48,36 +48,36 @@ public class SRImageCache {
     
     // MARK: - Saving Images
     
-    public func storeImage(image: UIImage?, withIdentifier identifier: String) {
+    open func storeImage(_ image: UIImage?, withIdentifier identifier: String) {
         
         if let path = pathForIdentifier(identifier) {
             
             // If the image is nil, remove images from the cache
             if image == nil {
-                inMemoryCache.removeObjectForKey(path)
+                inMemoryCache.removeObject(forKey: path as AnyObject)
                 do {
-                    try NSFileManager.defaultManager().removeItemAtPath(path)
+                    try FileManager.default.removeItem(atPath: path)
                 } catch _ {}
                 
                 return
             }
             
             // Otherwise, keep the image in memory
-            inMemoryCache.setObject(image!, forKey: path)
+            inMemoryCache.setObject(image!, forKey: path as AnyObject)
             
             // And in documents directory
             let data = UIImagePNGRepresentation(image!)!
-            data.writeToFile(path, atomically: true)
+            try? data.write(to: URL(fileURLWithPath: path), options: [.atomic])
         }
     }
     
     // MARK: - Helper
     
-    public func pathForIdentifier(identifier: String) -> String? {
+    open func pathForIdentifier(_ identifier: String) -> String? {
         
-        let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        let documentsDirectoryURL: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         
-        let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(identifier)
+        let fullURL = documentsDirectoryURL.appendingPathComponent(identifier)
         
         return fullURL.path
     }

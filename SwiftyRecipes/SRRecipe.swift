@@ -3,21 +3,21 @@
 //  Swifty Recipes
 //
 //  Created by Lasse Hammer Priebe on 12/02/16.
-//  Copyright © 2016 Lasse Hammer Priebe. All rights reserved.
+//  Copyright © 2016 Hundredeni. All rights reserved.
 //
 
 import UIKit
 
-public class SRRecipe: NSObject, NSCoding {
+open class SRRecipe: NSObject, NSCoding {
     
     // MARK: Properties
     
-    public let title: String!
-    public let ingredients: String!
-    public let url: NSURL!
-    public let thumbnailUrl: NSURL?
+    open let title: String!
+    open let ingredients: String!
+    open let url: URL!
+    open let thumbnailUrl: URL?
     
-    public var thumbnailImage: UIImage? {
+    open var thumbnailImage: UIImage? {
         get {
             return SRPuppyClient.sharedClient().imageCache.imageWithIdentifier(thumbnailUrl?.path)
         }
@@ -28,7 +28,7 @@ public class SRRecipe: NSObject, NSCoding {
         }
     }
     
-    private struct CodingKeys {
+    fileprivate struct CodingKeys {
         static let Title = "title"
         static let Href = "href"
         static let Ingredients = "ingredients"
@@ -37,7 +37,7 @@ public class SRRecipe: NSObject, NSCoding {
     
     // MARK: Life Cycle
     
-    public init(title: String, ingredients: String, url: NSURL, thumbnailUrl: NSURL?) {
+    public init(title: String, ingredients: String, url: URL, thumbnailUrl: URL?) {
         self.title = title
         self.ingredients = ingredients
         self.url = url
@@ -46,22 +46,22 @@ public class SRRecipe: NSObject, NSCoding {
     
     // MARK: NSCoding Protocol
     
-    @objc public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(title, forKey: CodingKeys.Title)
-        aCoder.encodeObject(url, forKey: CodingKeys.Href)
-        aCoder.encodeObject(ingredients, forKey: CodingKeys.Ingredients)
-        aCoder.encodeObject(thumbnailUrl, forKey: CodingKeys.Thumbnail)
+    @objc open func encode(with aCoder: NSCoder) {
+        aCoder.encode(title, forKey: CodingKeys.Title)
+        aCoder.encode(url, forKey: CodingKeys.Href)
+        aCoder.encode(ingredients, forKey: CodingKeys.Ingredients)
+        aCoder.encode(thumbnailUrl, forKey: CodingKeys.Thumbnail)
     }
     
     @objc public required init?(coder aDecoder: NSCoder) {  
-        title = aDecoder.decodeObjectForKey(CodingKeys.Title) as! String
-        ingredients = aDecoder.decodeObjectForKey(CodingKeys.Ingredients) as! String
-        url = aDecoder.decodeObjectForKey(CodingKeys.Href) as! NSURL
-        thumbnailUrl = aDecoder.decodeObjectForKey(CodingKeys.Thumbnail) as! NSURL?
+        title = aDecoder.decodeObject(forKey: CodingKeys.Title) as! String
+        ingredients = aDecoder.decodeObject(forKey: CodingKeys.Ingredients) as! String
+        url = aDecoder.decodeObject(forKey: CodingKeys.Href) as! URL
+        thumbnailUrl = aDecoder.decodeObject(forKey: CodingKeys.Thumbnail) as! URL?
     }
     
     // MARK: - CustomStringConvertible Protocol
-    override public var description: String {
+    override open var description: String {
         get {
             return "Recipe: \(title).\nIngredients: \(ingredients)"
         }

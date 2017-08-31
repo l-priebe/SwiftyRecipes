@@ -3,17 +3,17 @@
 //  Swifty Recipes
 //
 //  Created by Lasse Hammer Priebe on 12/02/16.
-//  Copyright © 2016 Lasse Hammer Priebe. All rights reserved.
+//  Copyright © 2016 Hundredeni. All rights reserved.
 //
 
 import Foundation
 
-public class SRPuppyAPI {
+open class SRPuppyAPI {
     
     // MARK: Properties
     
     /// Recipe Puppy API and optional parameters. See http://www.recipepuppy.com/about/api/
-    private struct API {
+    fileprivate struct API {
         static let BasePath: String = "http://www.recipepuppy.com/api/?"
         struct Keys {
             static let Ingredients = "i"
@@ -22,7 +22,7 @@ public class SRPuppyAPI {
             static let Images = "onlyImages"
         }
     }
-
+    
     // MARK: Class Methods
     
     /**
@@ -33,19 +33,19 @@ public class SRPuppyAPI {
      - parameter onlyImages: A Bool determining whether recipes with no thumbnail should be excluded from the API request.
      - returns: The created NSURL if the parameters are appropriate, otherwise nil is returned and an error message is printed to the console.
      */
-    class func getURLWithParameters(ingredients: [String]?, query: String?, page: Int = 1, onlyImages: Int = 0) -> NSURL? {
+    class func getURLWithParameters(_ ingredients: [String]?, query: String?, page: Int = 1, onlyImages: Int = 0) -> URL? {
         
         var urlPath = API.BasePath
         
         // Add ingredients parameter and ingredients to the path.
-        if let ingredients = ingredients where ingredients.count > 0 {
+        if let ingredients = ingredients, ingredients.count > 0 {
             
             urlPath += "\(API.Keys.Ingredients)="
             
             for ingredient in ingredients {
                 
                 // Encode ingredient with URL query allowed character set.
-                if let encodedIngredient = ingredient.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+                if let encodedIngredient = ingredient.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
                     
                     urlPath += encodedIngredient
                     
@@ -62,7 +62,7 @@ public class SRPuppyAPI {
         }
         
         // Add the normal search query to the path.
-        if let encodedQuery = query?.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+        if let encodedQuery = query?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
             urlPath += "&\(API.Keys.Query)=\(encodedQuery)"
         } else if query != nil {
             print("Error in SRPuppyAPI.getURLWithParameters: Query could not be encoded.")
@@ -85,6 +85,6 @@ public class SRPuppyAPI {
             return nil
         }
         
-        return NSURL(string: urlPath)
+        return URL(string: urlPath)
     }
 }

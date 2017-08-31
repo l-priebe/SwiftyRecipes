@@ -3,19 +3,19 @@
 //  Swifty Recipes
 //
 //  Created by Lasse Hammer Priebe on 12/02/16.
-//  Copyright © 2016 Lasse Hammer Priebe. All rights reserved.
+//  Copyright © 2016 Hundredeni. All rights reserved.
 //
 
 import Foundation
 
-public class SRPuppyClient {
+open class SRPuppyClient {
     
-    public typealias CompletionHandler = (result: [SRRecipe]?, error: NSError?) -> Void
+    public typealias CompletionHandler = (_ result: [SRRecipe]?, _ error: NSError?) -> Void
     
     // MARK: Properties
     
-    public let imageCache = SRImageCache()
-    public var includesRecipesWithoutThumbnails: Bool {
+    open let imageCache = SRImageCache()
+    open var includesRecipesWithoutThumbnails: Bool {
         get {
             return onlyImages == 0
         }
@@ -27,14 +27,14 @@ public class SRPuppyClient {
             }
         }
     }
-
-    private let session: NSURLSession!
-    private var onlyImages: Int = 1
+    
+    fileprivate let session: URLSession!
+    fileprivate var onlyImages: Int = 1
     
     // MARK: Life Cycle
     
-    private init() {
-        session = NSURLSession.sharedSession()
+    fileprivate init() {
+        session = URLSession.shared
     }
     
     class func sharedClient() -> SRPuppyClient {
@@ -49,19 +49,19 @@ public class SRPuppyClient {
     // MARK: Convenience Methods
     
     /**
-    Utilizes a NSURLSessionDataTask to retrieve recipes using the Recipe Puppy API.
-    - parameter ingredients: An optional array of ingredient names represented by a [String].
-    - parameter query: An optional search query represented by a String.
-    - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
-    - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
-    */
-    public func fetchRecipes(ingredients: [String]?, query: String?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
+     Utilizes a NSURLSessionDataTask to retrieve recipes using the Recipe Puppy API.
+     - parameter ingredients: An optional array of ingredient names represented by a [String].
+     - parameter query: An optional search query represented by a String.
+     - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
+     - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
+     */
+    open func fetchRecipes(_ ingredients: [String]?, query: String?, page: Int = 1, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask? {
         
         return taskWithParameters(ingredients, query: query, page: page) { result, error in
             if let error = error {
-                completionHandler(result: nil, error: error)
+                completionHandler(nil, error)
             } else {
-                completionHandler(result: result, error: error)
+                completionHandler(result, error)
             }
         }
     }
@@ -72,13 +72,13 @@ public class SRPuppyClient {
      - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
      - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
      */
-    public func fetchRecipesWithIngredients(ingredients: [String]?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
+    open func fetchRecipesWithIngredients(_ ingredients: [String]?, page: Int = 1, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask? {
         
         return taskWithParameters(ingredients, query: nil, page: page) { result, error in
             if let error = error {
-                completionHandler(result: nil, error: error)
+                completionHandler(nil, error)
             } else {
-                completionHandler(result: result, error: error)
+                completionHandler(result, error)
             }
         }
     }
@@ -89,13 +89,13 @@ public class SRPuppyClient {
      - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
      - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error.
      */
-    public func fetchRecipesWithQuery(query: String?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
+    open func fetchRecipesWithQuery(_ query: String?, page: Int = 1, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask? {
         
         return taskWithParameters(nil, query: query, page: page) { result, error in
             if let error = error {
-                completionHandler(result: nil, error: error)
+                completionHandler(nil, error)
             } else {
-                completionHandler(result: result, error: error)
+                completionHandler(result, error)
             }
         }
     }
@@ -103,31 +103,31 @@ public class SRPuppyClient {
     // MARK: Task Methods
     
     /**
-    Creates a NSURLSessionDataTask for a Recipe Puppy API request given a set of parameters.
-    - parameter ingredients: An optional array of ingredient names represented by a [String].
-    - parameter query: An optional search query represented by a String.
-    - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
-    - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error. If the recipe array and errors are both nil, this indicates correct response with no result.
-    - returns: The created NSURLSessionDataTask if an url can be created with the provided parameters. Otherwise nil is returned.
-    */
-    public func taskWithParameters(ingredients: [String]?, query: String?, page: Int = 1, completionHandler: CompletionHandler) -> NSURLSessionDataTask? {
+     Creates a NSURLSessionDataTask for a Recipe Puppy API request given a set of parameters.
+     - parameter ingredients: An optional array of ingredient names represented by a [String].
+     - parameter query: An optional search query represented by a String.
+     - parameter page: An Int representing the page number of the request. The Recipe Puppy API returns at most 10 items per page.
+     - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional [SRRecipe] array and an optional NSError indicating error. If the recipe array and errors are both nil, this indicates correct response with no result.
+     - returns: The created NSURLSessionDataTask if an url can be created with the provided parameters. Otherwise nil is returned.
+     */
+    open func taskWithParameters(_ ingredients: [String]?, query: String?, page: Int = 1, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask? {
         
         // Create the url request.
         if let url = SRPuppyAPI.getURLWithParameters(ingredients, query: query, page: page, onlyImages: onlyImages) {
-            let request = NSURLRequest(URL: url)
+            let request = URLRequest(url: url)
             
             // Create the task.
-            let task = session.dataTaskWithRequest(request) {data, response, downloadError in
+            let task = session.dataTask(with: request, completionHandler: {data, response, downloadError in
                 
                 // Parse the data if no errors were returned.
                 if let error = downloadError {
-                    completionHandler(result: nil, error: error)
+                    completionHandler(nil, error as NSError)
                 } else if let data = data {
                     SRPuppyParser.parseJSON(data, completionHandler: completionHandler)
                 } else {
-                    completionHandler(result: nil, error: nil)
+                    completionHandler(nil, nil)
                 }
-            }
+            }) 
             task.resume()
             return task
         } else {
@@ -136,25 +136,25 @@ public class SRPuppyClient {
     }
     
     /**
-    Creates a NSURLSessionDataTask for an image located at a given NSURL.
-    - parameter imageURL: The URL of the image in an NSURL object.
-    - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional NSData object containing the image data and an optional NSError indicating error.
-    - returns: The created NSURLSessionDataTask.
-    */
-    public func taskForImage(imageURL: NSURL, completionHandler: (imageData: NSData?, error: NSError?) ->  Void) -> NSURLSessionTask {
+     Creates a NSURLSessionDataTask for an image located at a given NSURL.
+     - parameter imageURL: The URL of the image in an NSURL object.
+     - parameter completionHandler: A completion handler for the asynchroneous data request. The result is provided as an optional NSData object containing the image data and an optional NSError indicating error.
+     - returns: The created NSURLSessionDataTask.
+     */
+    open func taskForImage(_ imageURL: URL, completionHandler: @escaping (_ imageData: Data?, _ error: NSError?) ->  Void) -> URLSessionTask {
         
         // Create the url request.
-        let request = NSURLRequest(URL: imageURL)
+        let request = URLRequest(url: imageURL)
         
         // Create the task.
-        let task = session.dataTaskWithRequest(request) {data, response, downloadError in
+        let task = session.dataTask(with: request, completionHandler: {data, response, downloadError in
             
             if let error = downloadError {
-                completionHandler(imageData: nil, error: error)
+                completionHandler(nil, error as NSError?)
             } else {
-                completionHandler(imageData: data, error: nil)
+                completionHandler(data, nil)
             }
-        }
+        }) 
         
         task.resume()
         
